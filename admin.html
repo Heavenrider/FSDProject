@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><title>Admin | Manage</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar"><a href="index.html" class="logo">Admin Panel</a><button class="btn btn-danger" onclick="logout()">Logout</button></nav>
+    <main class="container">
+        <div class="card" style="margin-bottom:30px">
+            <h3>Post New Scholarship</h3>
+            <form id="sForm" style="display:flex; gap:10px">
+                <input id="t" placeholder="Title" required>
+                <input id="a" placeholder="Amount ($)" required>
+                <input id="d" type="date" required>
+                <button type="submit" class="btn">Publish</button>
+            </form>
+        </div>
+        <h3>Pending Applications</h3>
+        <div id="appList"></div>
+    </main>
+    <script src="script.js"></script>
+    <script>
+        if(localStorage.getItem('userRole') !== 'admin') location.href='login.html';
+        const render = () => {
+            const apps = db.getApplications();
+            document.getElementById('appList').innerHTML = apps.map(a => `
+                <div class="card" style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+                    <div><strong>${a.email}</strong><br><small>Applying for: ${a.scholarship}</small></div>
+                    <div style="display:flex; gap:10px; align-items:center">
+                        <span class="status status-${a.status}">${a.status}</span>
+                        <button class="btn btn-success" onclick="update(${a.id}, 'Approved')">Approve</button>
+                        <button class="btn btn-danger" onclick="update(${a.id}, 'Rejected')">Reject</button>
+                    </div>
+                </div>`).join('') || "No applications yet.";
+        };
+        window.update = (id, status) => {
+            const apps = db.getApplications().map(a => a.id === id ? {...a, status} : a);
+            db.saveApplications(apps);
+            render();
+        };
+        document.getElementById('sForm').onsubmit = (e) => {
+            e.preventDefault();
+            const s = db.getScholarships();
+            s.push({id:Date.now(), title:document.getElementById('t').value, amount:document.getElementById('a').value, deadline:document.getElementById('d').value, category:'General'});
+            db.saveScholarships(s);
+            location.reload();
+        };
+        window.onload = render;
+    </script>
+</body>
+</html>
