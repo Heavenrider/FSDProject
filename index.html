@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><title>ScholarGate | Browse</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="logo">ScholarGate</a>
+        <div id="navLinks" class="nav-links"></div>
+    </nav>
+    <main class="container">
+        <header style="text-align:center; margin-bottom:40px">
+            <h1>Find Your Scholarship</h1>
+            <p>Access funding opportunities for your education.</p>
+        </header>
+        <div class="grid" id="grid"></div>
+    </main>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h2 id="mTitle">Apply</h2>
+            <form id="applyForm">
+                <textarea id="reason" placeholder="Why do you deserve this scholarship?" rows="4" required></textarea>
+                <button type="submit" class="btn" style="width:100%">Submit Application</button>
+                <button type="button" class="btn btn-danger" style="width:100%; margin-top:10px" onclick="document.getElementById('modal').style.display='none'">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        let selectedS = "";
+        window.onload = () => {
+            const list = db.getScholarships();
+            document.getElementById('grid').innerHTML = list.map(s => `
+                <div class="card">
+                    <span style="color:var(--primary); font-weight:bold; font-size:0.8rem">${s.category}</span>
+                    <h3 style="margin:10px 0">${s.title}</h3>
+                    <p>Amount: <strong style="color:var(--success)">${s.amount}</strong></p>
+                    <p style="font-size:0.8rem; color:#64748b">Deadline: ${s.deadline}</p>
+                    <button class="btn" style="width:100%" onclick="openApp('${s.title}')">Apply Now</button>
+                </div>`).join('');
+        };
+        function openApp(t) {
+            if(!localStorage.getItem('userRole')) return location.href='login.html';
+            selectedS = t;
+            document.getElementById('mTitle').innerText = t;
+            document.getElementById('modal').style.display = 'flex';
+        }
+        document.getElementById('applyForm').onsubmit = (e) => {
+            e.preventDefault();
+            const apps = db.getApplications();
+            apps.push({ id: Date.now(), email: localStorage.getItem('userEmail'), scholarship: selectedS, status: 'Pending' });
+            db.saveApplications(apps);
+            alert("Application submitted successfully!");
+            location.href='dashboard.html';
+        };
+    </script>
+</body>
+</html>
