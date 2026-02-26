@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><title>Sign Up | ScholarGate</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="display:flex; align-items:center; justify-content:center; height:100vh; background:#f1f5f9">
+    <div class="card" style="width:400px">
+        <h2 style="text-align:center">Student Registration</h2>
+        <form id="signupForm">
+            <input type="text" placeholder="Full Name" required>
+            <input type="email" id="email" placeholder="Email Address" required>
+            <input type="number" step="0.1" placeholder="Current GPA" required>
+            <button type="submit" class="btn" style="width:100%; margin-top:10px">Create Account</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('signupForm').onsubmit = (e) => {
+            e.preventDefault();
+            localStorage.setItem('userEmail', document.getElementById('email').value);
+            localStorage.setItem('userRole', 'student');
+            location.href = 'index.html';
+        };
+    </script>
+</body>
+</html>
