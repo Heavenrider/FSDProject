@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><title>My Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar"><a href="index.html" class="logo">My Dashboard</a><a href="index.html" class="btn">Browse More</a></nav>
+    <main class="container">
+        <h2>My Application History</h2>
+        <div id="list" class="grid"></div>
+    </main>
+    <script src="script.js"></script>
+    <script>
+        window.onload = () => {
+            const email = localStorage.getItem('userEmail');
+            const myApps = db.getApplications().filter(a => a.email === email);
+            document.getElementById('list').innerHTML = myApps.map(a => `
+                <div class="card">
+                    <h3>${a.scholarship}</h3>
+                    <p>Status: <span class="status status-${a.status}">${a.status}</span></p>
+                </div>`).join('') || "<p>You haven't applied for anything yet.</p>";
+        };
+    </script>
+</body>
+</html>
